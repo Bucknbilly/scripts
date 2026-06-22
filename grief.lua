@@ -1,4 +1,4 @@
-local Players = game:GetService("Players")
+ local Players = game:GetService("Players")
   local lp = Players.LocalPlayer
   local ws = math.max(lp:GetNetworkPing()+0.007, 0.051)
   local isog = workspace:FindFirstChild("Cubes") ~= nil
@@ -23,22 +23,31 @@ local Players = game:GetService("Players")
       return t
   end
 
-  local r = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+  getgenv().stopGrief = false
   local i = 0
   task.spawn(function()
-      while true do
+      while not getgenv().stopGrief do
+          local r = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
           local dtools = findbtools()
-          if #dtools > 0 and r then
-              for _, v in pairs(cfolder:GetDescendants()) do
+          local descendants = cfolder:GetDescendants()
+          if #descendants == 0 or #dtools == 0 or not r then
+              task.wait(1)
+          else
+              for _, v in pairs(descendants) do
+                  if getgenv().stopGrief then break end
                   if v:IsA("BasePart") then
-                      i = i+1; local dt = dtools[(i%#dtools)+1]
+                      i = i+1
+                      local dt = dtools[(i%#dtools)+1]
                       if dt.bt.Parent ~= lp.Character then dt.bt.Parent = lp.Character end
                       dt.e:FireServer(v, r.Position)
                       task.wait(ws/#dtools)
                   end
               end
-          else
-              task.wait(1)
+              task.wait(0.5)
           end
       end
   end)
+
+  Stop it with:
+
+  getgenv().stopGrief = true
