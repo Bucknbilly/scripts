@@ -1,3 +1,14 @@
+local players = game:GetService("Players")
+local coregui = game:GetService("CoreGui")
+
+local plr = players.LocalPlayer
+local backpack = plr:WaitForChild("Backpack")
+
+local old = coregui:FindFirstChild("Item Spam Drop")
+if old then
+	old:Destroy()
+end
+
 local rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local window = rayfield:CreateWindow({
