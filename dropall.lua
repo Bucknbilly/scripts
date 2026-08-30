@@ -2,7 +2,6 @@ local players = game:GetService("Players")
 local coregui = game:GetService("CoreGui")
 
 local plr = players.LocalPlayer
-local backpack = plr:WaitForChild("Backpack")
 
 local old = coregui:FindFirstChild("Item Spam Drop")
 if old then
@@ -42,9 +41,13 @@ local selectedlabel = tab:CreateParagraph({
 local function gettools()
 	local list = {}
 
-	for _, v in ipairs(backpack:GetChildren()) do
-		if v:IsA("Tool") then
-			list[#list + 1] = v
+	local backpack = plr:FindFirstChild("Backpack")
+
+	if backpack then
+		for _, v in ipairs(backpack:GetChildren()) do
+			if v:IsA("Tool") then
+				list[#list + 1] = v
+			end
 		end
 	end
 
@@ -112,11 +115,11 @@ local dropdown = tab:CreateDropdown({
 
 		if type(value) == "table" then
 			name = value[1]
-		else
+		elseif type(value) == "string" then
 			name = value
 		end
 
-		if type(name) ~= "string" or name == "" then
+		if not name or name == "" then
 			selected = nil
 
 			selectedlabel:Set({
@@ -153,7 +156,9 @@ tab:CreateSlider({
 })
 
 local function refresh()
-	dropdown:Refresh(getnames())
+	local names = getnames()
+
+	dropdown:Refresh(names)
 
 	if selected then
 		local amount = #getcopies(selected)
@@ -202,7 +207,9 @@ local function run()
 		return
 	end
 
-	if #getcopies(selected) == 0 then
+	local copies = getcopies(selected)
+
+	if #copies == 0 then
 		rayfield:Notify({
 			Title = "error",
 			Content = "no copies of " .. selected .. " found",
@@ -223,8 +230,22 @@ local function run()
 		while running do
 			local tools = getcopies(selected)
 
+			if #tools == 0 then
+				status:Set({
+					Title = "status",
+					Content = "waiting for tools"
+				})
+
+				task.wait(0.1)
+				continue
+			end
+
 			for i = #tools, 2, -1 do
-				local j = math.random(i)
+				if not running then
+					break
+				end
+
+				local j = math.random(1, i)
 				tools[i], tools[j] = tools[j], tools[i]
 			end
 
