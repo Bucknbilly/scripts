@@ -41,23 +41,9 @@ local selectedlabel = tab:CreateParagraph({
 local function gettools()
 	local list = {}
 
-	local backpack = plr:FindFirstChild("Backpack")
-
-	if backpack then
-		for _, v in ipairs(backpack:GetChildren()) do
-			if v:IsA("Tool") then
-				list[#list + 1] = v
-			end
-		end
-	end
-
-	local char = plr.Character
-
-	if char then
-		for _, v in ipairs(char:GetChildren()) do
-			if v:IsA("Tool") then
-				list[#list + 1] = v
-			end
+	for _, v in ipairs(plr:GetDescendants()) do
+		if v:IsA("Tool") then
+			list[#list + 1] = v
 		end
 	end
 
