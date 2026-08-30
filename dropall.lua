@@ -300,14 +300,6 @@ tab:CreateButton({
 	end
 })
 
-task.spawn(function()
-	while task.wait(5) do
-		if not running then
-			refresh()
-		end
-	end
-end)
-
 refresh()
 
 rayfield:Notify({
