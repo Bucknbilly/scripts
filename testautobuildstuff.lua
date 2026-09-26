@@ -580,8 +580,10 @@ local function findAdjacentPlacement(blockData)
 	for _, brick in ipairs(folder:GetChildren()) do
 		if brick:IsA("BasePart") and brick.Name == "Brick" and brick.Size == blockData.size then
 			if brick.Material == blockData.material and brick.CanCollide == blockData.canCollide then
-				local dc = (brick.Color - blockData.color)
-				if math.abs(dc.R) < 0.01 and math.abs(dc.G) < 0.01 and math.abs(dc.B) < 0.01 then
+				local dr = brick.Color.R - blockData.color.R
+				local dg = brick.Color.G - blockData.color.G
+				local db = brick.Color.B - blockData.color.B
+				if math.abs(dr) < 0.01 and math.abs(dg) < 0.01 and math.abs(db) < 0.01 then
 					local diff = blockData.centerPos - brick.Position
 					local half2 = brick.Size / 2
 					local expX = half1.X + half2.X
@@ -664,7 +666,6 @@ local function placeBlock(blockData, buildTools)
 	if not newBrick then return false end
 	blockData.placedBrick = newBrick
 
-	-- Resize FIRST, then paint/spray so the corner is settled.
 	if blockData.needsResize and newBrick.Size ~= blockData.size then
 		resizeBlock(blockData)
 		newBrick = findBrickAtCorner(expectedCorner) or newBrick
